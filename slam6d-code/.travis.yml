@@ -1,0 +1,71 @@
+language: generic
+branches:
+  except:
+   - appveyor
+notifications:
+  email:
+    recipients:
+      - slam6d-commits@lists.sourceforge.net
+    on_success: change
+    on_failure: always
+env: # needed for allow_failures
+matrix:
+  allow_failures:
+    - os: linux
+      sudo: required
+      services:
+        - docker
+      env:
+        - DERIV=debian DIST=sid
+    - os: linux
+      sudo: required
+      services:
+        - docker
+      env:
+        - DERIV=debian DIST=sid CC=clang
+  include:
+    - os: osx
+      before_cache:
+        - brew cleanup
+      cache:
+        directories:
+        - $HOME/Library/Caches/Homebrew
+    - os: linux
+      sudo: required
+      services:
+        - docker
+      env:
+        - DERIV=debian DIST=sid
+    - os: linux
+      sudo: required
+      services:
+        - docker
+      env:
+        - DERIV=debian DIST=sid CC=clang
+    - os: linux
+      sudo: required
+      services:
+        - docker
+      env:
+        - DERIV=debian DIST=buster
+    - os: linux
+      sudo: required
+      services:
+        - docker
+      env:
+        - DERIV=debian DIST=stretch
+    - os: linux
+      sudo: required
+      services:
+        - docker
+      env:
+        - DERIV=ubuntu DIST=xenial
+    - os: linux
+      sudo: required
+      services:
+        - docker
+      env:
+        - DERIV=ubuntu DIST=bionic
+script:
+  - if [[ $TRAVIS_OS_NAME == 'osx' ]]; then ./travismacosbuild.sh; fi
+  - if [[ $TRAVIS_OS_NAME == 'linux' ]]; then ./travisdockerbuild.sh $DERIV $DIST $CC; fi
